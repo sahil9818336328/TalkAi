@@ -15,7 +15,6 @@ const NewTour = () => {
   } = useMutation({
     mutationFn: async (destination) => {
       const newTour = await generateTourResponse(destination)
-      console.log(newTour.tokens)
 
       if (newTour.tour) {
         toast.success(`${newTour.tokens} tokens used.`)
