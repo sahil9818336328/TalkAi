@@ -20,7 +20,7 @@ const NewTour = () => {
         toast.success(`${newTour.tokens} tokens used.`)
         return newTour.tour
       }
-      toast.error('No matching city found...')
+      toast.error('Please provide valid city / country...')
       return null
     },
   })
