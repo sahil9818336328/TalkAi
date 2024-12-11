@@ -17,14 +17,13 @@ export const generateChatResponse = async (chatMessages) => {
       temperature: 0,
     })
 
-    return response.choices[0].message
+    return {
+      message: response.choices[0].message,
+      tokens: response.usage.total_tokens,
+    }
   } catch (error) {
     return null
   }
-}
-
-export const getExistingTour = async ({ city, country }) => {
-  return null
 }
 
 export const generateTourResponse = async ({ city, country }) => {
@@ -57,7 +56,7 @@ If you can't find info on exact ${city}, or ${city} does not exist, or it's popu
       return null
     }
 
-    return tourData.tour
+    return { tour: tourData.tour, tokens: response.usage.total_tokens }
   } catch (error) {
     console.log(error)
 
@@ -65,6 +64,17 @@ If you can't find info on exact ${city}, or ${city} does not exist, or it's popu
   }
 }
 
-export const createNewTour = async (tour) => {
-  return null
+export const generateTourImage = async ({ city, country }) => {
+  try {
+    const tourImage = await openai.images.generate({
+      prompt: `a panoramic view of the ${city} ${country}`,
+      n: 1,
+      size: '512x512',
+    })
+    console.log(tourImage?.data[0]?.url)
+
+    return tourImage?.data[0]?.url
+  } catch (error) {
+    return null
+  }
 }

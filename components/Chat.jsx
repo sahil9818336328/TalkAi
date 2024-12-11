@@ -16,7 +16,8 @@ const Chat = () => {
         return
       }
 
-      setMessages((prev) => [...prev, data])
+      toast.success(`${data.tokens} tokens used.`)
+      setMessages((prev) => [...prev, data.message])
     },
   })
 

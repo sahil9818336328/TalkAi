@@ -2,8 +2,10 @@
 
 import toast from 'react-hot-toast'
 import TourInfo from '@/components/TourInfo'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { generateTourResponse } from '@/utils/actions'
+import axios from 'axios'
+const url = `https://api.unsplash.com/search/photos?client_id=lyJKwwNYkvADe_s4-s7TEvNdklbd_HzelHB4g3G8VAE&query=`
 
 const NewTour = () => {
   const {
@@ -13,13 +15,26 @@ const NewTour = () => {
   } = useMutation({
     mutationFn: async (destination) => {
       const newTour = await generateTourResponse(destination)
-      if (newTour) {
-        return newTour
+      console.log(newTour.tokens)
+
+      if (newTour.tour) {
+        toast.success(`${newTour.tokens} tokens used.`)
+        return newTour.tour
       }
       toast.error('No matching city found...')
       return null
     },
   })
+
+  const data = useQuery({
+    queryKey: ['unsplash', tour],
+    queryFn: async () => {
+      const response = await axios(`${url}${tour.city}`)
+      return response
+    },
+  })
+
+  const tourImage = data?.data?.data?.results[0]?.urls.raw
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -58,7 +73,9 @@ const NewTour = () => {
         </div>
       </form>
       <div className='mt-16'>
-        <div className='mt-16'>{tour ? <TourInfo tour={tour} /> : null}</div>
+        <div className='mt-16'>
+          {tour ? <TourInfo tour={tour} tourImage={tourImage} /> : null}
+        </div>
       </div>
     </>
   )
